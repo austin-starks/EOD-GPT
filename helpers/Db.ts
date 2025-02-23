@@ -93,7 +93,7 @@ class Database {
       try {
         await adminDb.command({ killOp: 1, op: op.opid });
         console.log(`Killed long-running operation: ${op.opid}`);
-      } catch (error) {
+      } catch (error: any) {
         console.error(`Failed to kill operation ${op.opid}: ${error.message}`);
       }
     }

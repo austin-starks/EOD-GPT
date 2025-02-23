@@ -134,6 +134,31 @@ To use the AI query system:
 
 The system will convert your natural language query into SQL, execute it against BigQuery, and return the results.
 
+### Example Output
+
+Here's a sample response when asking about companies with the highest net income:
+
+```
+Here's a summary of the stocks with the highest reported net income:
+
+**Summary:**
+The top companies by net income are primarily in the technology and finance sectors. Alphabet (GOOG/GOOGL) leads, followed by Berkshire Hathaway (BRK-A/BRK-B), Apple (AAPL), and Microsoft (MSFT).
+
+**Top Stocks by Net Income:**
+
+| Ticker | Symbol | Net Income (USD) | Date       |
+|--------|--------|------------------|------------|
+| GOOG   | GOOG   | 100,118,000,000 | 2025-02-05 |
+| GOOGL  | GOOGL  | 100,118,000,000 | 2025-02-05 |
+| BRK-B  | BRK-B  | 96,223,000,000  | 2024-02-26 |
+| BRK-A  | BRK-A  | 96,223,000,000  | 2024-02-26 |
+| AAPL   | AAPL   | 93,736,000,000  | 2024-11-01 |
+
+**Insights:**
+- The data includes both Class A and Class B shares for Alphabet and Berkshire Hathaway
+- Most recent data is from early 2025 reporting period
+```
+
 ## Important Considerations
 
 - **Error Handling:** The script includes basic error handling, but you may want to enhance it for production use. Consider adding more robust logging and retry mechanisms.

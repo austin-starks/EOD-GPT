@@ -614,7 +614,34 @@ LIMIT 25;
     // 3. Execute the query against BigQuery
     try {
       const results = await this.financialsManager.executeQuery(sqlQuery);
-      return results;
+
+      // 4. Format results using LLM
+      const formatPrompt = `You are a financial analyst assistant. Format and summarize the following SQL query results in markdown.
+The original question was: "${question}"
+
+Include:
+- A brief summary of the findings
+- A markdown table with the key data
+- Any relevant insights or patterns
+
+Keep the response concise and focused on answering the user's question.`;
+
+      const formattedResponse = await this.requestyClient.sendRequest({
+        systemPrompt: formatPrompt,
+        model: RequestyModelEnum.geminiFlash2,
+        temperature: 1,
+        messages: [
+          {
+            sender: "User",
+            content: `SQL Results: ${JSON.stringify(results, null, 2)}`,
+          },
+        ],
+        userId: "system",
+      });
+
+      const summary = formattedResponse.choices[0].message?.content;
+      console.log("Formatted Response:", summary);
+      return summary;
     } catch (error) {
       console.error("Error executing query:", error);
       throw error;

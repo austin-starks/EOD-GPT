@@ -1,6 +1,6 @@
-# Financial Data Downloader
+# Financial Data Downloader & AI Query System
 
-This project downloads financial data (quarterly and annual) for a given stock ticker from EOD Historical Data and stores it in both MongoDB and Google BigQuery.
+This project downloads financial data (quarterly and annual) for stocks from EOD Historical Data and stores it in both MongoDB and Google BigQuery. It also includes an AI-powered natural language interface for querying the financial data.
 
 ## Prerequisites
 
@@ -9,8 +9,8 @@ Before you begin, ensure you have the following:
 - **Node.js** (version 18 or higher) and **npm** installed.
 - **MongoDB** installed and running locally or accessible via a connection string.
 - **Google Cloud Platform (GCP) account** with BigQuery enabled.
-- An **EOD Historical Data API key**. You can sign up for a free or paid plan at [https://eodhd.com/r?ref=nexustrade](https://eodhd.com/r?ref=nexustrade). Using this link helps support the project!
-- **Requesty API key**. You can sign up for Requesty at [https://app.requesty.ai/join?ref=e0603ee5](https://app.requesty.ai/join?ref=e0603ee5). Using this referral link helps support the project!
+- An **EOD Historical Data API key** ([Sign up for a free or paid plan here](https://eodhd.com/r?ref=nexustrade) - referral link).
+- **Requesty API key** ([Sign up for Requesty here](https://app.requesty.ai/join?ref=e0603ee5) - referral link).
 - A `.env` file in the root directory with the following variables:
 
   ```
@@ -84,32 +84,55 @@ You have two options for running the script:
 
 ## Usage
 
-To download financial data for a specific stock ticker, modify the `index.ts` file to specify the ticker you want to process. For example:
+### Downloading Financial Data
 
-```typescript
-// In index.ts
-(async () => {
-  try {
-    const cloud = new Database("local");
-    await cloud.connect();
-    console.log("Connected to database");
-    const startTime = new Date();
-    const processor = new EarningsProcessor();
-    await processor.processAndSaveEarnings("MSFT"); // Changed from AAPL to MSFT
-    const endTime = new Date();
-    const duration = endTime.getTime() - startTime.getTime();
-    console.log(
-      Processing complete. Files have been saved. Time taken: ${duration}ms
-    );
-  } catch (error) {
-    console.error("Error:", error);
-  } finally {
-    process.exit(0);
-  }
-})();
+1. **For all stocks in your watchlist:**
+
+   - The project includes a `tickers.csv` file with a pre-populated list of major US stocks
+   - You can modify this file to add or remove tickers (one ticker per line, skip the header row)
+   - Run the upload script:
+
+   ```bash
+   ts-node upload.ts
+   ```
+
+2. **For a single stock:**
+   - Modify the `upload.ts` script to use `processAndSaveEarningsForOneStock`:
+   ```typescript
+   // In upload.ts
+   const processor = new EarningsProcessor();
+   await processor.processAndSaveEarningsForOneStock("AAPL"); // Replace with your desired ticker
+   ```
+
+### File Structure
+
+```
+.
+├── src/
+├── tickers.csv     # Pre-populated list of major US stocks
+├── .env            # Your environment variables (create this)
+└── ... other files
 ```
 
-Then, run the script using either of the methods described above.
+### Querying Financial Data with AI
+
+The project includes a natural language interface for querying financial data. You can ask questions in plain English about the stored financial data.
+
+To use the AI query system:
+
+1. **Run the chat script:**
+
+   ```bash
+   ts-node chat.ts
+   ```
+
+2. **Example queries you can try:**
+   - "What stocks have the highest revenue?"
+   - "Show me companies with increasing free cash flow over the last 4 quarters"
+   - "Which companies have the highest net income in their latest annual report?"
+   - "List the top 10 companies by EBITDA margin"
+
+The system will convert your natural language query into SQL, execute it against BigQuery, and return the results.
 
 ## Important Considerations
 

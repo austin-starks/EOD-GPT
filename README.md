@@ -110,9 +110,11 @@ You have two options for running the script:
 
 ```
 .
-├── src/
+├── helpers/
 ├── tickers.csv     # Pre-populated list of major US stocks
 ├── .env            # Your environment variables (create this)
+├── upload.ts       # Script to upload financial data for all stocks in your watchlist
+├── chat.ts         # Script to query financial data with AI
 └── ... other files
 ```
 
@@ -176,4 +178,4 @@ Contributions are welcome! Please submit a pull request with your changes.
 
 ## License
 
-[MIT License](LICENSE) (Replace with your chosen license)
+[MIT License](LICENSE)

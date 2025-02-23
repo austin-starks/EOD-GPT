@@ -28,8 +28,8 @@ Before you begin, ensure you have the following:
 1.  **Clone the repository:**
 
     ```bash
-    git clone <your_repository_url>
-    cd <your_repository_directory>
+    git clone https://github.com/austin-starks/FinAnGPT-Pro
+    cd FinAnGPT-Pro
     ```
 
 2.  **Install dependencies:**

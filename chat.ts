@@ -596,9 +596,14 @@ LIMIT 25;
 \`\`\`
     `;
     console.log(`Sending Request to ${clientType}`);
-    const response = await this.requestyClient.sendRequest({
+    const client =
+      clientType === LlmClients.REQUESTY
+        ? this.requestyClient
+        : this.ollamaClient;
+
+    const response = await client.sendRequest({
       systemPrompt,
-      model: RequestyModelEnum.geminiFlash2,
+      model: client.getModel(),
       temperature: 1,
       messages: [
         {
@@ -608,8 +613,8 @@ LIMIT 25;
       ],
       userId: "system",
     });
-
-    const sqlQuery = response.choices[0].message?.content
+    const content = client.getChatResponseContent(response as any);
+    const sqlQuery = content
       ?.trim()
       .replace(/^```sql\n?/, "") // Remove opening ```sql
       .replace(/^```\n?/, "") // Remove opening ``` (if no sql)
@@ -633,10 +638,7 @@ Include:
 - Any relevant insights or patterns
 
 Keep the response concise and focused on answering the user's question.`;
-      const client =
-        clientType === LlmClients.REQUESTY
-          ? this.requestyClient
-          : this.ollamaClient;
+
       const model = client.getModel();
       const formattedResponse = await client.sendRequest({
         systemPrompt: formatPrompt,
@@ -668,7 +670,7 @@ Keep the response concise and focused on answering the user's question.`;
     const queryProcessor = new QueryProcessor();
     const results = await queryProcessor.processNaturalLanguageQuery(
       "What stocks have the highest income (annual) right now?",
-      LlmClients.OLLAMA
+      LlmClients.REQUESTY
     );
 
     console.log("Query Results:", results);

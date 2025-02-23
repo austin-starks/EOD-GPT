@@ -1,22 +1,30 @@
 import RequestyServiceClient, {
   RequestyModelEnum,
-} from "./helpers/RequestyServiceClient";
+} from "./src/services/llmApi/clients/RequestyServiceClient";
 
-import Database from "./helpers/Db";
-import { FinancialsDataManager } from "./helpers/bigQuery";
+import Database from "./src/services/databases/mongo";
+import { FinancialsDataManager } from "./src/services/databases/bigQuery";
+import OllamaServiceClient from "./src/services/llmApi/clients/OllamaServiceClient";
+
+enum LlmClients {
+  REQUESTY = "requesty",
+  OLLAMA = "ollama",
+}
 
 class QueryProcessor {
   private requestyClient: RequestyServiceClient;
+  private ollamaClient: OllamaServiceClient;
   private financialsManager: FinancialsDataManager;
 
   constructor() {
     this.requestyClient = new RequestyServiceClient();
+    this.ollamaClient = new OllamaServiceClient();
     this.financialsManager = new FinancialsDataManager(
       FinancialsDataManager.quarterlyTableId
     );
   }
 
-  async processNaturalLanguageQuery(question: string) {
+  async processNaturalLanguageQuery(question: string, clientType: LlmClients) {
     // 1. Convert natural language to SQL using Requesty
     const systemPrompt = `You are an expert at writing BigQuery SQL queries.
     
@@ -587,7 +595,7 @@ ORDER BY t1.freeCashFlow DESC
 LIMIT 25;
 \`\`\`
     `;
-    console.log("Sending Request to Requesty");
+    console.log(`Sending Request to ${clientType}`);
     const response = await this.requestyClient.sendRequest({
       systemPrompt,
       model: RequestyModelEnum.geminiFlash2,
@@ -625,10 +633,14 @@ Include:
 - Any relevant insights or patterns
 
 Keep the response concise and focused on answering the user's question.`;
-
-      const formattedResponse = await this.requestyClient.sendRequest({
+      const client =
+        clientType === LlmClients.REQUESTY
+          ? this.requestyClient
+          : this.ollamaClient;
+      const model = client.getModel();
+      const formattedResponse = await client.sendRequest({
         systemPrompt: formatPrompt,
-        model: RequestyModelEnum.geminiFlash2,
+        model,
         temperature: 1,
         messages: [
           {
@@ -639,7 +651,7 @@ Keep the response concise and focused on answering the user's question.`;
         userId: "system",
       });
 
-      const summary = formattedResponse.choices[0].message?.content;
+      const summary = client.getChatResponseContent(formattedResponse as any);
       console.log("Formatted Response:", summary);
       return summary;
     } catch (error) {
@@ -655,7 +667,8 @@ Keep the response concise and focused on answering the user's question.`;
     await db.connect();
     const queryProcessor = new QueryProcessor();
     const results = await queryProcessor.processNaturalLanguageQuery(
-      "What stocks have the highest income (annual) right now?"
+      "What stocks have the highest income (annual) right now?",
+      LlmClients.OLLAMA
     );
 
     console.log("Query Results:", results);

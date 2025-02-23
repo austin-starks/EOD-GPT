@@ -1,5 +1,5 @@
-import Database from "./helpers/Db";
-import StockFinancials from "./helpers/StockFinancials";
+import Database from "./src/services/databases/mongo";
+import StockFinancials from "./src/models/StockFinancials";
 
 class EarningsProcessor {
   private static getTickersFromCsv(): string[] {

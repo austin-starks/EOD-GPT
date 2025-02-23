@@ -2,8 +2,9 @@ import RequestyChatLog, {
   RequestyChatMessage,
   RequestyChatRequest,
   RequestyChatResponse,
-} from "./requestyChatLogs";
+} from "../logs/requestyChatLogs";
 
+import { OllamaModelEnum } from "./OllamaServiceClient";
 import axios from "axios";
 import dotenv from "dotenv";
 
@@ -48,7 +49,7 @@ export interface ChatMessage {
 
 export interface SendChatMessageRequest {
   systemPrompt: string;
-  model: RequestyModelEnum;
+  model: RequestyModelEnum | OllamaModelEnum;
   temperature: number;
   messages: ChatMessage[];
   userId: string;
@@ -110,6 +111,11 @@ class RequestyServiceClient {
     },
   ];
   private static readonly RETRY_DELAY_MS = 1000; // 1 second
+
+  getModel() {
+    // can also pick o3Mini or any model supported by Requesty
+    return RequestyModelEnum.geminiFlash2;
+  }
 
   async getModels(): Promise<string[]> {
     // Check if cache exists and is still valid
@@ -192,6 +198,10 @@ class RequestyServiceClient {
     throw new Error(
       "All models and attempts exhausted. Please try again later."
     );
+  }
+
+  getChatResponseContent(response: RequestyChatResponse) {
+    return response.choices[0].message.content;
   }
 
   // Helper method to reduce code duplication

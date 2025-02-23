@@ -1,7 +1,10 @@
-import { EodhdBulkFundamentalsResponse, EodhdClient } from "./eodhdClient";
+import {
+  EodhdBulkFundamentalsResponse,
+  EodhdClient,
+} from "../services/fundamentalApi/EodhdClient";
 import { Schema, model } from "mongoose";
 
-import { FinancialsDataManager } from "./bigQuery";
+import { FinancialsDataManager } from "../services/databases/bigQuery";
 import momentTz from "moment-timezone";
 
 // Batch size for processing stocks in groups

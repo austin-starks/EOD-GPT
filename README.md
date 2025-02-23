@@ -11,8 +11,9 @@ Before you begin, ensure you have the following:
 - **Node.js** (version 18 or higher) and **npm** installed.
 - **MongoDB** installed and running locally or accessible via a connection string.
 - **Google Cloud Platform (GCP) account** with BigQuery enabled.
-- An **EOD Historical Data API key** ([Sign up for a free or paid plan here](https://eodhd.com/r?ref=nexustrade) - referral link).
 - **Requesty API key** ([Sign up for Requesty here](https://app.requesty.ai/join?ref=e0603ee5) - referral link).
+- An **EOD Historical Data API key** ([Sign up for a free or paid plan here](https://eodhd.com/r?ref=nexustrade) - referral link).
+- (Optional) **Ollama** installed and running locally ([Download here](https://ollama.com/download)) if you want to use local LLM capabilities instead of Requesty.
 - A `.env` file in the root directory with the following variables:
 
   ```
@@ -21,6 +22,7 @@ Before you begin, ensure you have the following:
   EODHD_API_KEY="YOUR_EODHD_API_KEY" # Replace with your EODHD API key
   REQUESTY_API_KEY="YOUR_REQUESTY_API_KEY" # Replace with your Requesty API key
   GOOGLE_APPLICATION_CREDENTIALS_JSON='{"type": "service_account", ...}' # Replace with your GCP service account credentials JSON
+  OLLAMA_SERVICE_URL="http://localhost:11434" # Optional: Only needed if using Ollama instead of Requesty
   ```
 
   **Important:** The `GOOGLE_APPLICATION_CREDENTIALS_JSON` environment variable should contain the _entire_ JSON content of your Google Cloud service account key. This is necessary for authenticating with BigQuery. Make sure this is properly formatted and secured.
@@ -110,12 +112,27 @@ You have two options for running the script:
 
 ```
 .
-├── helpers/
-├── tickers.csv     # Pre-populated list of major US stocks
-├── .env            # Your environment variables (create this)
-├── upload.ts       # Script to upload financial data for all stocks in your watchlist
-├── chat.ts         # Script to query financial data with AI
-└── ... other files
+├── src/
+│   ├── models/
+│   │   └── StockFinancials.ts
+│   └── services/
+│       ├── databases/
+│       │   ├── bigQuery.ts
+│       │   └── mongo.ts
+│       ├── fundamentalApi/
+│       │   └── EodhdClient.ts
+│       └── llmApi/
+│           ├── clients/
+│           │   ├── OllamaServiceClient.ts
+│           │   └── RequestyServiceClient.ts
+│           └── logs/
+│               ├── ollamaChatLogs.ts
+│               └── requestyChatLogs.ts
+├── tickers.csv
+├── .env
+├── upload.ts
+├── chat.ts
+└── README.md
 ```
 
 ### Querying Financial Data with AI
@@ -179,3 +196,27 @@ Contributions are welcome! Please submit a pull request with your changes.
 ## License
 
 [MIT License](LICENSE)
+
+### Using Ollama for Local LLM Queries
+
+This project supports using Ollama as a local LLM alternative to cloud-based services. To use Ollama:
+
+1. **Install Ollama:**
+
+   - Download and install from [ollama.com/download](https://ollama.com/download)
+   - Follow the installation instructions for your operating system
+
+2. **Pull your desired model:**
+
+   ```bash
+   ollama pull llama2  # or mistral, codellama, etc.
+   ```
+
+3. **Ensure Ollama is running:**
+
+   - The service should be running on http://localhost:11434
+   - Verify by checking if the service responds: `curl http://localhost:11434/api/tags`
+
+4. **Configure the environment:**
+   - Make sure your `.env` file includes: `OLLAMA_SERVICE_URL="http://localhost:11434"`
+   - The system will automatically use Ollama for queries when configured

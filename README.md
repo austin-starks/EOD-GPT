@@ -12,7 +12,7 @@ Before you begin, ensure you have the following:
 - **MongoDB** installed and running locally or accessible via a connection string.
 - **Google Cloud Platform (GCP) account** with BigQuery enabled.
 - **Requesty API key** ([Sign up for Requesty here](https://app.requesty.ai/join?ref=e0603ee5) - referral link).
-- An **EOD Historical Data API key** ([Sign up for a free or paid plan here](https://eodhd.com/?ref=nexustrade&via=austinstarks) - referral link).
+- An **EOD Historical Data API key** ([Sign up for a free or paid plan here](https://eodhd.com/pricing?via=austinstarks&ref1=nexustrade) - referral link).
 - (Optional) **Ollama** installed and running locally ([Download here](https://ollama.com/download)) if you want to use local LLM capabilities instead of Requesty.
 - A `.env` file in the root directory with the following variables:
 

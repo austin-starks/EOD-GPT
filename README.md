@@ -1,4 +1,4 @@
-# Financial Data Downloader & AI Query System
+# EODHD Data Downloader & AI Query System
 
 This project is based on the article [Grok is Overrated. Do This To Transform ANY LLM to a Super-Intelligent Financial Analyst](https://medium.com/p/40f697092399). It downloads financial data (quarterly and annual) for stocks from EOD Historical Data and stores it in both MongoDB and Google BigQuery. It also includes an AI-powered natural language interface for querying the financial data.
 

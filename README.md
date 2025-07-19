@@ -1,4 +1,4 @@
-# Financial Data Downloader & AI Query System
+# EODHD Data Downloader & AI Query System
 
 This project is based on the article [Grok is Overrated. Do This To Transform ANY LLM to a Super-Intelligent Financial Analyst](https://medium.com/p/40f697092399). It downloads financial data (quarterly and annual) for stocks from EOD Historical Data and stores it in both MongoDB and Google BigQuery. It also includes an AI-powered natural language interface for querying the financial data.
 
@@ -12,7 +12,7 @@ Before you begin, ensure you have the following:
 - **MongoDB** installed and running locally or accessible via a connection string.
 - **Google Cloud Platform (GCP) account** with BigQuery enabled.
 - **Requesty API key** ([Sign up for Requesty here](https://app.requesty.ai/join?ref=e0603ee5) - referral link).
-- An **EOD Historical Data API key** ([Sign up for a free or paid plan here](https://eodhd.com/r?ref=nexustrade) - referral link).
+- An **EOD Historical Data API key** ([Sign up for a free or paid plan here](https://eodhd.com/pricing?via=austinstarks&ref1=nexustrade) - referral link).
 - (Optional) **Ollama** installed and running locally ([Download here](https://ollama.com/download)) if you want to use local LLM capabilities instead of Requesty.
 - A `.env` file in the root directory with the following variables:
 

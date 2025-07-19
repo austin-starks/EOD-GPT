@@ -1,4 +1,5 @@
 import Database from "./src/services/databases/mongo";
+import PriceMetrics from "./src/models/PriceMetrics";
 import StockFinancials from "./src/models/StockFinancials";
 
 class EarningsProcessor {
@@ -35,6 +36,7 @@ class EarningsProcessor {
     const startTime = new Date();
     const processor = new EarningsProcessor();
     await processor.processAndSaveEarningsForAllStocks();
+    await PriceMetrics.hydrateAllData();
     const endTime = new Date();
     const duration = endTime.getTime() - startTime.getTime();
     console.log(

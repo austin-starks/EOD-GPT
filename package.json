@@ -20,7 +20,8 @@
   "author": "Austiin Starks",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^22.13.5"
+    "@types/node": "^22.13.5",
+    "typescript": "^5.8.3"
   },
   "dependencies": {
     "@google-cloud/bigquery": "^7.9.2",

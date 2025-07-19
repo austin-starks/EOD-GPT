@@ -53,7 +53,7 @@ const AnnualFinancialsSchema = new Schema<IStockFinancials>(
 QuarterlyFinancialsSchema.index({ ticker: 1, date: 1 }, { unique: true });
 AnnualFinancialsSchema.index({ ticker: 1, date: 1 }, { unique: true });
 
-const QuarterlyFinancialsModel = model<IStockFinancials>(
+export const QuarterlyFinancialsModel = model<IStockFinancials>(
   "StockQuarterlyFinancials",
   QuarterlyFinancialsSchema
 );
@@ -263,7 +263,7 @@ export default class StockFinancials {
         await annualBQ.mergeTempTableToMainTable();
         console.log("Annual financials uploaded to BigQuery successfully");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error uploading to BigQuery:", error);
       console.log(error?.errors?.[0]);
     }

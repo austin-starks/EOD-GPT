@@ -63,6 +63,17 @@ export interface EodhdFundamentalsResponse {
     Exchange?: string;
     CurrencyCode?: string;
     Address?: string;
+    AddressData?: {
+      Street?: string;
+      City?: string;
+      State?: string;
+      Country?: string;
+      ZIP?: string;
+    };
+    Description?: string;
+    IPODate?: string;
+    Sector?: string;
+    Industry?: string;
   };
   Earnings?: {
     History?: any[];
@@ -73,6 +84,29 @@ export interface EodhdFundamentalsResponse {
     Cash_Flow?: HistoricalFinancialStatement;
     Income_Statement?: HistoricalFinancialStatement;
   };
+}
+
+export interface EodhdHistoricalPriceData {
+  date: string;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  adjusted_close: number;
+  volume: number;
+}
+
+export interface EodhdRealTimePriceData {
+  code: string;
+  timestamp: number;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+  previousClose: number;
+  change: number;
+  change_p: number;
 }
 
 export class EodhdClient {
@@ -95,14 +129,14 @@ export class EodhdClient {
     return `${endpoint}`;
   }
 
-  async getFundamentals(ticker: string): Promise<EodhdFundamentalsResponse> {
+  async getFundamentals(ticker: string, exchange: string = "US"): Promise<EodhdFundamentalsResponse> {
     try {
-      const url = this.buildUrl(`/fundamentals/${ticker}.US`);
+      const url = this.buildUrl(`/fundamentals/${ticker}.${exchange}`);
       const { data } = await this.client.get(url);
       return data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        throw new Error(`Failed to fetch data for ${ticker}: ${error.message}`);
+        throw new Error(`Failed to fetch data for ${ticker}.${exchange}: ${error.message}`);
       }
       throw error;
     }
@@ -115,7 +149,7 @@ export class EodhdClient {
     limit: number = 500
   ): Promise<EodhdBulkFundamentalsResponse[]> {
     try {
-      const symbolsParam = symbols.map((s) => `${s}.US`).join(",");
+      const symbolsParam = symbols.map((s) => `${s}.${exchange}`).join(",");
       const url = this.buildUrl(`/bulk-fundamentals/${exchange}`);
       const { data } = await this.client.get(url, {
         params: {
@@ -129,6 +163,64 @@ export class EodhdClient {
       return data;
     } catch (error) {
       console.error(error);
+      throw error;
+    }
+  }
+
+  async getHistoricalPriceData(
+    ticker: string,
+    exchange: string = "US",
+    from: string,
+    to: string,
+    period: "d" | "w" | "m" = "d"
+  ): Promise<EodhdHistoricalPriceData[]> {
+    try {
+      const url = this.buildUrl(`/eod/${ticker}.${exchange}`);
+      const { data } = await this.client.get(url, {
+        params: {
+          from,
+          to,
+          period,
+        },
+      });
+      return data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(`Failed to fetch historical price data for ${ticker}.${exchange}: ${error.message}`);
+      }
+      throw error;
+    }
+  }
+
+  async getRealTimePrice(
+    ticker: string,
+    exchange: string = "US"
+  ): Promise<EodhdRealTimePriceData> {
+    try {
+      const url = this.buildUrl(`/real-time/${ticker}.${exchange}`);
+      const { data } = await this.client.get(url, {
+        params: {
+          fmt: "json",
+        },
+      });
+      return data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(`Failed to fetch real-time price for ${ticker}.${exchange}: ${error.message}`);
+      }
+      throw error;
+    }
+  }
+
+  async getExchangeSymbols(exchange: string): Promise<any[]> {
+    try {
+      const url = this.buildUrl(`/exchange-symbol-list/${exchange}`);
+      const { data } = await this.client.get(url);
+      return data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(`Failed to fetch symbols for exchange ${exchange}: ${error.message}`);
+      }
       throw error;
     }
   }
